@@ -1,8 +1,8 @@
 const cloudinary=require('cloudinary').v2;
 const upload = require('../middleware/upload');
-const Jewllery=require('../module/jewllery');
+const jewellery=require('../module/jewellery');
 
-exports.jewllery=async(req,res)=>{
+exports.jewellery=async(req,res)=>{
     try{
     
         if(!req.files||!req.files.length===0){
@@ -20,7 +20,7 @@ exports.jewllery=async(req,res)=>{
             const result=await cloudinary.uploader.upload(file.path,{folder:'image'});
             uploadedFiles.push({client_id:result.public_id,url:result.secure_url});
         }
-       const newjewllery=new Jewllery({
+       const newjewellery=new jewellery({
         upload:uploadedFiles,
         name,
         price,
@@ -32,57 +32,57 @@ exports.jewllery=async(req,res)=>{
         gross_weight,
         net_weight 
        })
-       await newjewllery.save();
+       await newjewellery.save();
        return res.json({
         success:true,
         files:uploadedFiles,
         message:"file uploaded and saved succefully",
-        jewllery:newjewllery
+        jewellery:newjewellery
        });
     }catch(error){
-        console.log('error uploding jewllery',error);
+        console.log('error uploding jewellery',error);
         return res.status(500).json({success:false,message:'an error occure while uploading files'}) 
     }
 };
 
-exports.getjewllery=async(req,res)=>{
+exports.getjewellery=async(req,res)=>{
     try{
-        const jewllery=await Jewllery.find();
-        if(!jewllery||jewllery.lenth===0){
+        const jewellery=await jewellery.find();
+        if(!jewellery||jewellery.lenth===0){
             return res.json({message:'no photo found'}); 
         }
-        return res.json({message:"dashboard retrived successfully",jewllery})
+        return res.json({message:"dashboard retrived successfully",jewellery})
 
     }catch (err) {
       console.error(err);
       return res.status(500).json({ message: "Failed to fetch dashboard", error: err.message });
     }
 };
-exports.getOnejewllery= async (req,res)=>{
+exports.getOnejewellery= async (req,res)=>{
     try{
         const Id=req.params.Id;
         if(Id){
-            const jewllery=await Jewllery.findById(Id);
-            if(!jewllery){
-                return res.status(404).json({message:'jewllery is not found'})
+            const jewellery=await jewellery.findById(Id);
+            if(!jewellery){
+                return res.status(404).json({message:'jewellery is not found'})
             }
-            return res.status(200).json(jewllery);
+            return res.status(200).json(jewellery);
         }
-        const jewller=await Jewllery.find();
+        const jewller=await jewellery.find();
         return res.status(200).json(jewller);
     }catch(err){
         console.error(err);
-        return res.status(500).json({message:'failed to fetch jewllery',error:err.message})
+        return res.status(500).json({message:'failed to fetch jewellery',error:err.message})
     }
 };
 exports.deleteProduct=async (req,res)=>{
     try{
         const {Id}=req.params;
-        const product = await Jewllery.findById(Id);
+        const product = await jewellery.findById(Id);
         if(!product){
             return res.status(404).json({message:'product not found'});
         }
-await Jewllery.deleteOne();
+await jewellery.deleteOne();
 return res.status(200).json({message:'product deleted successfully'});
     }catch(error){
         console.log(err);
@@ -92,8 +92,8 @@ return res.status(200).json({message:'product deleted successfully'});
 
 exports.search=async(req,res)=>{
     try{
-        const query=req.query.jewllery;
-        const n=await Jewllery.find({
+        const query=req.query.jewellery;
+        const n=await jewellery.find({
             $or:[
                 {name:{$regex:query,$options:'i'}},
                 {category:{$regex:query,$options:'i'}},

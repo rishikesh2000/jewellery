@@ -15,9 +15,9 @@ app.use(bodyParser.urlencoded({extended:true}));
 app.use(cors()); 
 
 const admin=require('./view/login')
-const jewllery=require('./view/jewller');
+const jewellery=require('./view/jewellery');
 app.use('/',admin);
-app.use('/',jewllery);
+app.use('/',jewellery);
 
 cloudinary.config({ 
     cloud_name: process.env.CLOUD_NAME, 

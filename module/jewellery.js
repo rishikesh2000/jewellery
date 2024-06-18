@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
-let jewllery = new Schema({
+let jewellery = new Schema({
     upload: [
         {
             client_id: {
@@ -24,7 +24,7 @@ let jewllery = new Schema({
     gross_weight: { type: String },
     net_weight: { type: String }
 }, {
-    collection: 'jewllery'
+    collection: 'jewellery'
 });
 
-module.exports = mongoose.model('jewllery', jewllery);
+module.exports = mongoose.model('jewellery', jewellery);
