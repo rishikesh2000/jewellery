@@ -1,6 +1,6 @@
 const cloudinary=require('cloudinary').v2;
 const upload = require('../middleware/upload');
-const jewellery=require('../module/jewellery');
+const Jewellery=require('../module/jewllery');
 
 exports.jewellery=async(req,res)=>{
     try{
@@ -20,7 +20,7 @@ exports.jewellery=async(req,res)=>{
             const result=await cloudinary.uploader.upload(file.path,{folder:'image'});
             uploadedFiles.push({client_id:result.public_id,url:result.secure_url});
         }
-       const newjewellery=new jewellery({
+       const newjewellery=new Jewellery({
         upload:uploadedFiles,
         name,
         price,
@@ -47,7 +47,7 @@ exports.jewellery=async(req,res)=>{
 
 exports.getjewellery=async(req,res)=>{
     try{
-        const jewellery=await jewellery.find();
+        const jewellery=await Jewellery.find();
         if(!jewellery||jewellery.lenth===0){
             return res.json({message:'no photo found'}); 
         }
@@ -62,13 +62,13 @@ exports.getOnejewellery= async (req,res)=>{
     try{
         const Id=req.params.Id;
         if(Id){
-            const jewellery=await jewellery.findById(Id);
+            const jewellery=await Jewellery.findById(Id);
             if(!jewellery){
                 return res.status(404).json({message:'jewellery is not found'})
             }
             return res.status(200).json(jewellery);
         }
-        const jewller=await jewellery.find();
+        const jewller=await Jewellery.find();
         return res.status(200).json(jewller);
     }catch(err){
         console.error(err);
@@ -78,11 +78,11 @@ exports.getOnejewellery= async (req,res)=>{
 exports.deleteProduct=async (req,res)=>{
     try{
         const {Id}=req.params;
-        const product = await jewellery.findById(Id);
+        const product = await Jewellery.findById(Id);
         if(!product){
             return res.status(404).json({message:'product not found'});
         }
-await jewellery.deleteOne();
+await Jewellery.deleteOne();
 return res.status(200).json({message:'product deleted successfully'});
     }catch(error){
         console.log(err);
@@ -93,14 +93,14 @@ return res.status(200).json({message:'product deleted successfully'});
 exports.search=async(req,res)=>{
     try{
         const query=req.query.jewellery;
-        const n=await jewellery.find({
+        const n=await Jewellery.find({
             $or:[
                 {name:{$regex:query,$options:'i'}},
                 {category:{$regex:query,$options:'i'}},
             {material:{$regex:query,$options:'i'}},
             {gender:{$regex:query,$options:'i'}}
             ]
-        },{upload:1,name:1,price:1,description:1,material:1,gross_weight:1,net_weight:1}).exec();
+        },{upload:1,name:1,price:1,description:1,category:1,gender:1,material:1,gross_weight:1,net_weight:1}).exec();
     res.json(n);
     }catch(err){
         res.status(500).json({messsage:err.message});

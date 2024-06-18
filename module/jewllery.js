@@ -24,7 +24,7 @@ let jewellery = new Schema({
     gross_weight: { type: String },
     net_weight: { type: String }
 }, {
-    collection: 'jewellery'
+    collection: 'jewllery'
 });
 
-module.exports = mongoose.model('jewellery', jewellery);
+module.exports = mongoose.model('jewllery', jewellery);

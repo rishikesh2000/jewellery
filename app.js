@@ -15,7 +15,7 @@ app.use(bodyParser.urlencoded({extended:true}));
 app.use(cors()); 
 
 const admin=require('./view/login')
-const jewellery=require('./view/jewellery');
+const jewellery=require('./view/jewller');
 app.use('/',admin);
 app.use('/',jewellery);
 
