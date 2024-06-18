@@ -1,4 +1,5 @@
 const cloudinary=require('cloudinary').v2;
+const upload = require('../middleware/upload');
 const Jewllery=require('../module/jewllery');
 
 exports.jewllery=async(req,res)=>{
@@ -74,3 +75,34 @@ exports.getOnejewllery= async (req,res)=>{
         return res.status(500).json({message:'failed to fetch jewllery',error:err.message})
     }
 };
+exports.deleteProduct=async (req,res)=>{
+    try{
+        const {Id}=req.params;
+        const product = await Jewllery.findById(Id);
+        if(!product){
+            return res.status(404).json({message:'product not found'});
+        }
+await Jewllery.deleteOne();
+return res.status(200).json({message:'product deleted successfully'});
+    }catch(error){
+        console.log(err);
+        return res.status(500).json({message:'failed to delete from database'});
+    }
+};
+
+exports.search=async(req,res)=>{
+    try{
+        const query=req.query.jewllery;
+        const n=await Jewllery.find({
+            $or:[
+                {name:{$regex:query,$options:'i'}},
+                {category:{$regex:query,$options:'i'}},
+            {material:{$regex:query,$options:'i'}},
+            {gender:{$regex:query,$options:'i'}}
+            ]
+        },{upload:1,name:1,price:1,description:1,material:1,gross_weight:1,net_weight:1}).exec();
+    res.json(n);
+    }catch(err){
+        res.status(500).json({messsage:err.message});
+    }
+}
