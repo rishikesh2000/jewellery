@@ -6,7 +6,7 @@ const dotenv = require('dotenv');
 const config=require('./DB');
 const cloudinary=require('cloudinary').v2;
 dotenv.config();
-const port=process.env.PORT||600
+const port=process.env.PORT||7000
 
 const app=express();
 app.use('/uploads', express.static('uploads'));
@@ -36,6 +36,8 @@ mongoose.connect(config.DB,{
 }).catch((err)=>{
     console.error('Cannot connect to database'+err);
 });
+
+
 
 app.listen(port,()=>{
     console.log(`server is running at http://localhost:${port}`);

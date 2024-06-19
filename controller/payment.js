@@ -1,61 +1,53 @@
-const Razorpay=require("razorpay");
+const Razorpay = require("razorpay");
+const crypto = require('crypto');
+const dotenv = require('dotenv');
+dotenv.config();
 
-const crypto=require('crypto');
+const razorpay = new Razorpay({
+    key_id: process.env.key_id,
+    key_secret: process.env.key_secret
+});
 
-const razorpay = new Razorpay ({
-
-key_id:"rzp_test_R4XhZB6m3vUozi",
-key_secret:"kMZQuORkGf4PgCZ6tWNN5w7G"
-    
-})
-
-exports.createOreder=async(req,res)=>{
-    const {amount}=req.body;
-    if(!amount){
-        return res.status(400).json({message:"please enter your amount"})
+exports.createPayment = async (req, res) => {
+    const { amount } = req.body;
+    if (!amount) {
+        return res.status(400).json({ message: "Please provide the amount." });
     }
-const options ={
-amount:amount*100,
-currency:"INR",
-receipt:"order_rcptid_11",
-payment_capture:1
+
+    const options = {
+        amount: amount * 100, // amount in paise (1 INR = 100 paise)
+        currency: "INR",
+        receipt: "order_rcptid_" + Date.now(), // Receipt generated for each transaction
+        payment_capture: 1 // Auto capture payment
+    };
+
+    try {
+        const response = await razorpay.orders.create(options);
+        res.status(201).json({
+            amount: response.amount,
+            currency: response.currency,
+            order_id: response.id
+        });
+    } catch (error) {
+        console.error("Error creating order:", error);
+        return res.status(500).json({ message: "Failed to create order." });
+    }
 };
 
-try {
+exports.verifyPaymentSignature = (req, res) => {
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
 
-    const response = await razorpay.orders.create(options);
-
-    res.status(201).json({
-
-        name: response,
-        order_id: response.id,
-        currency: response.currency,
-        amount: response.amount
-    })
-    
-} catch (error) {
-    return res.status(400).send("order not created");
-}
-};
-
-exports.verification=(req,res)=>{
-    try{
-        const{ razorpay_order_id,razorpay_payment_id,razorpay_signature}=req.body;
-if(!razorpay_order_id||!razorpay_payment_id||!razorpay_signature){
-    return res.status(500).json({message:"all field are require"});
-}
-const body=razorpay_order_id+"|"+razorpay_payment_id;
-const exprectedSignature= crypto.createHmac('sha256',razorpay.key_secret)
-.update(body.toString())
-.digest('hex');
-console.log('signature recevied',razorpay_signature);
-console.log('signature generated',exprectedSignature);
-const isAuthentic=exprectedSignature===razorpay_signature;
-if(!isAuthentic){
-    return res.status(400).json({success:false})
-}
-return res.status(200).json({success:true})
-    }catch(err){
-return res.status(500).json({message:err});
+    if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
+        return res.status(400).json({ message: "All fields are required." });
     }
-}
+
+    const generatedSignature = crypto.createHmac('sha256', process.env.key_secret)
+        .update(razorpay_order_id + "|" + razorpay_payment_id)
+        .digest('hex');
+
+    if (generatedSignature === razorpay_signature) {
+        return res.status(200).json({ success: true, message: "Payment signature verified successfully." });
+    } else {
+        return res.status(400).json({ success: false, message: "Invalid payment signature." });
+    }
+};
