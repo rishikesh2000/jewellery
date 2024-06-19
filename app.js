@@ -16,8 +16,10 @@ app.use(cors());
 
 const admin=require('./view/login')
 const jewellery=require('./view/jewller');
+const payment=require('./view/payment');
 app.use('/',admin);
 app.use('/',jewellery);
+app.use('/',payment);
 
 cloudinary.config({ 
     cloud_name: process.env.CLOUD_NAME, 
