@@ -106,3 +106,33 @@ exports.search=async(req,res)=>{
         res.status(500).json({messsage:err.message});
     }
 }
+exports.getFindJewellery = async(req, res) => {
+        
+    const { name, category, gender } = req.params;
+
+  try {
+    let query = {};
+
+    // Build the query based on request route parameters
+    if (name && name !== 'undefined') {
+      query.name = { $regex: new RegExp(name, 'i') }; // Case-insensitive search for name
+    }
+    if (category && category !== 'undefined') {
+      query.category = category;
+    }
+    if (gender && gender !== 'undefined') {
+      query.gender = gender;
+    }
+
+    // Perform the query using Mongoose
+    const jewelleryList = await Jewellery.find(query);
+
+    // Return the result as JSON
+    return res.status(200).json(jewelleryList);
+
+  }
+    catch (error) {
+        return res.status(500).send("server error");
+    }
+
+}
