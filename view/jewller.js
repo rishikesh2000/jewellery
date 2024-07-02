@@ -9,5 +9,9 @@ Router.get('/getjewellery',jewllery.getjewellery);
 Router.get('/getonejewellery/:Id',jewllery.getOnejewellery);
 Router.delete('/deletejewellery/:Id',middleware,jewllery.deleteProduct);
 Router.get('/search',jewllery.search)
-Router.get(['/:name?', '/:category?', '/:gender?'], jewllery.getFindJewellery)
+
+Router.get(['/category/:category?','/:name?', '/gender/:gender?', '/material/:material?' ], jewllery.getFindJewellery)
+
 module.exports=Router;
+
+////////

@@ -105,10 +105,13 @@ exports.search=async(req,res)=>{
     }catch(err){
         res.status(500).json({messsage:err.message});
     }
-}
+
+
+//////////////get one product /////////////
+
 exports.getFindJewellery = async(req, res) => {
         
-    const { name, category, gender } = req.params;
+    const { name, category, gender, material} = req.params;
 
   try {
     let query = {};
