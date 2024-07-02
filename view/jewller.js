@@ -12,3 +12,5 @@ Router.get('/search',jewllery.search)
 Router.get(['/category/:category?','/:name?', '/gender/:gender?', '/material/:material?' ], jewllery.getFindJewellery)
 
 module.exports=Router;
+
+////////
